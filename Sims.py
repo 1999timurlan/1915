@@ -1,7 +1,7 @@
 import random
 
 class Human:
-    def __init__(self, name="Human",job=None, home=None,car=None):
+    def __init__(self, name="Human",job=None, home=None,car=None,subject=None):
         self.name = name
         self.money = 100
         self.gladness = 50
@@ -10,11 +10,24 @@ class Human:
         self.job = job
         self.car = car
         self.home = home
+        self.subject=subject
     def get_home(self):
         self.home=House()
 
     def get_car(self):
-        self.car=Auto(brands_of_car)
+        self.car=Auto(brands_of_car = {
+        "BMW": {"fuel": 100, "strength":100,"consumption": 6},
+        "Lada": {"fuel": 50, "strength": 40, "consumption": 10},
+        "Volvo": {"fuel": 70, "strength": 150,"consumption": 8},
+        "Ferrari": {"fuel": 80, "strength": 120,"consumption": 14}})
+
+    def get_subject(self):
+        self.subject=Study(subject_list = {
+        "Math":{"teaching": 30, "sadness": 5},
+        "English":{"teaching": 20, "sadness":3},
+        "ICT":{"teaching": 15, "sadness": 2},
+        "Pe":{"teaching": 3, "sadness": 1},
+        "History": {"teaching": 25, "sadness": 7}})
 
     def get_job(self):
         if self.car.drive():
@@ -22,7 +35,11 @@ class Human:
         else:
             self.to_repair()
             return
-        self.job=Job(job_list)
+        self.job=Job(job_list = {
+        "Java developer":{"salary": 50, "gladness_less": 10},
+        "Python developer":{"salary": 40, "gladness_less":3},
+        "C++ developer":{"salary": 45, "gladness_less": 25},
+        "Rust developer":{"salary": 70, "gladness_less": 1}})
     def eat(self):
         if self.home.food<=0:
             self.shopping("food")
@@ -46,8 +63,7 @@ class Human:
         self.money+=self.job.salary
         self.gladness-=self.job.gladness_less
         self.satiety-=4
-
-    def study(self):
+    def studing(self):
         if self.car.drive():
             pass
         else:
@@ -57,9 +73,9 @@ class Human:
             else:
                 self.to_repair()
                 return
-        self.knowledge+=self.subject.knowness
+        self.knowledge+=self.subject.teaching
         self.gladness-=self.subject.sadness
-        self.satiety-=4
+        self.satiety-=3
 
     def shopping(self, manage):
         if self.car.drive():
@@ -99,9 +115,10 @@ class Human:
     def days_indexes(self, day):
         day=f"Today the {day} of {self.name}'a life"
         print(f"{day:=^50}","\n")
-        human_indexes=self.name + " 's indexes"
+        human_indexes=self.name + "'s indexes"
         print(f"{human_indexes:^50}","\n")
         print(f"Money-{self.money}")
+        print(f"Knowledge-{self.knowledge}")
         print(f"Satiety-{self.satiety}")
         print(f"Gladness-{self.gladness}")
         home_indexes="Home indexes"
@@ -115,13 +132,19 @@ class Human:
 
     def is_alive(self):
         if self.gladness<0:
+            print("------------------------------------------")
             print("Дипресія")
+            print("------------------------------------------")
             return False
         if self.satiety<0:
+            print("------------------------------------------")
             print("Голод")
+            print("------------------------------------------")
             return False
         if self.money<-500:
+            print("------------------------------------------")
             print("Банкрот")
+            print("------------------------------------------")
             return False
 
     def live(self, day):
@@ -132,14 +155,17 @@ class Human:
             self.get_home()
         if self.car is None:
             self.get_car()
-            print(f"Я купив машину{self.car.brand}")
+            print(f"Я купив машину: {self.car.brand}")
         if self.job is None:
             self.get_job()
-            print(f"Я не маю роботи, я йду отриматим роботу{self.job.job} з зарплатою {self.job.salary}")
-        self.days_indexes()
-        dice=random.randint(1,4)
+            print(f"Я не маю роботи, я йду отриматим роботу {self.job.job} з зарплатою {self.job.salary}")
+        if self.subject is None:
+            self.get_subject()
+            print(f"Я вивчаю: {self.subject.subject}")
+        self.days_indexes(day)
+        dice=random.randint(1,5)
         if self.satiety<20:
-            print("я йду їсти")
+            print("Я йду їсти")
             self.eat()
         elif self.gladness<20:
             if self.home.mess>15:
@@ -151,7 +177,10 @@ class Human:
         elif self.money<0:
             print("Я йду працювати")
             self.work()
-        elif self.car.strenght<15:
+        elif self.knowledge<90:
+            print("Я йду вчитися")
+            self.studing()
+        elif self.car.strength<15:
             print("Мені потрібно відремонтувати машину")
             self.to_repair()
         elif dice==1:
@@ -166,7 +195,9 @@ class Human:
         elif dice==4:
             print("Час смачненького")
             self.shopping(manage="delicacies")
-
+        elif dice==5:
+            print("Пора вчитися")
+            self.studing()
 class Auto:
     def __init__(self, brands_of_car):
         self.brand = random.choice(list(brands_of_car))
@@ -207,14 +238,15 @@ class Job:
 class Study:
     def __init__(self,subject_list):
         self.subject=random.choice(list(subject_list))
-        self.knowness=subject_list[self.subject]["knowness"]
+        self.teaching=subject_list[self.subject]["teaching"]
         self.sadness=subject_list[self.subject]["sadness"]
     subject_list = {
-        "Math":{"knowness": 30, "sadness": 5},
-        "English":{"knowness": 20, "sadness":3},
-        "ICT":{"knowness": 15, "sadness": 2},
-        "Pe":{"knowness": 3, "sadness": 1},
-        "History": {"knowness": 25, "sadness": 7}}
+        "Math":{"teaching": 30, "sadness": 5},
+        "English":{"teaching": 20, "sadness":3},
+        "ICT":{"teaching": 15, "sadness": 2},
+        "Pe":{"teaching": 3, "sadness": 1},
+        "History": {"teaching": 25, "sadness": 7}}
+
 
 nick=Human(name="Nick")
 for day in range(1,8):
