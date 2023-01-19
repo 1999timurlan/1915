@@ -18,21 +18,3 @@ print()
 for _ in dir(__builtins__):
     print(_)
 print("^^^^^^^^^^^^^^^^^^^")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
